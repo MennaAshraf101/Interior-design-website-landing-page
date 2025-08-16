@@ -11,12 +11,23 @@ body {
     color: #333;
     background-color: #fff;
     overflow-x: hidden;
+    min-width: 320px;
+    width: 100%;
+    position: relative;
+}
+
+/* Ensure all sections maintain proper width */
+section {
+    width: 100%;
+    box-sizing: border-box;
 }
 
 .container {
     max-width: 75rem; /* 1200px */
     margin: 0 auto;
     padding: 0 1.25rem; /* 20px */
+    width: 100%;
+    box-sizing: border-box;
 }
 
 /* Header Styles */
@@ -29,12 +40,17 @@ body {
     right: 0;
     z-index: 1000;
     box-shadow: 0 0.125rem 0.625rem rgba(0, 0, 0, 0.1); /* 0 2px 10px */
+    width: 100%;
+    box-sizing: border-box;
 }
 
 .nav {
     display: flex;
     justify-content: space-between;
     align-items: center;
+    position: relative;
+    flex-wrap: nowrap;
+    min-height: 60px;
 }
 
 .logo img {
@@ -68,6 +84,8 @@ body {
     font-size: 0.875rem; /* 14px */
     cursor: pointer;
     transition: background-color 0.3s ease;
+    flex-shrink: 0;
+    white-space: nowrap;
 }
 
 .sign-up-btn:hover {
@@ -83,10 +101,65 @@ body {
     color: #333;
     cursor: pointer;
     padding: 0.3125rem; /* 5px */
+    z-index: 1001;
+    position: relative;
+    flex-shrink: 0;
 }
 
-.mobile-nav-toggle:hover {
+/* CSS-only Mobile Navigation using checkbox hack */
+.mobile-nav-toggle {
+    display: none;
+}
+
+.mobile-nav-toggle-label {
+    display: none;
+    background: none;
+    border: none;
+    font-size: 1.5rem;
+    color: #333;
+    cursor: pointer;
+    padding: 0.3125rem;
+    z-index: 1001;
+    position: relative;
+    flex-shrink: 0;
+    user-select: none;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+}
+
+.mobile-nav-toggle-label:hover {
     color: #666;
+}
+
+/* Hidden checkbox for CSS-only toggle */
+.mobile-nav-checkbox {
+    display: none;
+}
+
+/* Backdrop for mobile menu */
+.mobile-nav-backdrop {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.5);
+    z-index: 999;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    cursor: pointer;
+    pointer-events: none;
+    user-select: none;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+}
+
+/* Close menu when clicking backdrop */
+.mobile-nav-backdrop:active {
+    /* This will help with touch devices */
 }
 
 /* Hero Section */
@@ -784,7 +857,7 @@ body {
 /* Mobile Navigation Styles */
 @media (max-width: 768px) {
     .nav-links {
-        display: none;
+        display: flex;
         position: absolute;
         top: 100%;
         left: 0;
@@ -794,18 +867,103 @@ body {
         padding: 1rem;
         box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
         gap: 1rem;
+        z-index: 1000;
+        border-radius: 0 0 8px 8px;
+        transform: translateY(-100%);
+        opacity: 0;
+        transition: all 0.3s ease;
+        pointer-events: none;
+        visibility: hidden;
     }
 
-    .nav-links.active {
-        display: flex;
-    }
-
-    .mobile-nav-toggle {
+    /* Show mobile nav toggle label */
+    .mobile-nav-toggle-label {
         display: block;
+        order: 3;
+        min-width: 44px;
+        min-height: 44px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    /* Ensure proper order of elements */
+    .logo {
+        order: 1;
+    }
+
+    .nav-links {
+        order: 2;
     }
 
     .sign-up-btn {
+        order: 4;
+    }
+
+    /* CSS-only toggle functionality */
+    .mobile-nav-checkbox:checked ~ .nav-links {
+        transform: translateY(0);
+        opacity: 1;
+        pointer-events: auto;
+        visibility: visible;
+    }
+
+    /* Show backdrop when menu is open */
+    .mobile-nav-checkbox:checked ~ .mobile-nav-backdrop {
+        display: block;
+        opacity: 1;
+        pointer-events: auto;
+    }
+
+  
+    /* Change icon when menu is open */
+    .mobile-nav-checkbox:checked ~ .mobile-nav-toggle-label .fa-bars {
         display: none;
+    }
+
+    .mobile-nav-checkbox:checked ~ .mobile-nav-toggle-label .fa-times {
+        display: inline-block;
+    }
+
+    .mobile-nav-toggle-label .fa-times {
+        display: none;
+    }
+
+    /* Keep sign-up button visible but adjust size for mobile */
+    .sign-up-btn {
+        padding: 0.4rem 1rem;
+        font-size: 0.8rem;
+        margin-right: 0.5rem;
+    }
+
+    /* Ensure proper spacing in mobile nav */
+    .nav-links a {
+        padding: 0.75rem 0;
+        border-bottom: 1px solid #eee;
+        width: 100%;
+        text-align: center;
+        transition: background-color 0.2s ease;
+    }
+
+    .nav-links a:last-child {
+        border-bottom: none;
+    }
+
+    .nav-links a:hover {
+        background-color: #f8f8f8;
+    }
+
+    .nav-links a:active {
+        background-color: #f0f0f0;
+    }
+
+
+
+    /* Backdrop is now a label, so clicking it will close the menu */
+    
+    /* Ensure smooth transitions */
+    .nav-links {
+        will-change: transform, opacity, visibility;
     }
 }
 
@@ -818,6 +976,21 @@ body {
     /* Header */
     .logo img {
         width: 6rem;
+    }
+
+    /* Ensure hamburger menu is always visible on small screens */
+    .mobile-nav-toggle-label {
+        display: block !important;
+        font-size: 1.25rem;
+        min-width: 44px;
+        min-height: 44px;
+    }
+
+    /* Adjust sign-up button for very small screens */
+    .sign-up-btn {
+        padding: 0.35rem 0.8rem;
+        font-size: 0.75rem;
+        margin-right: 0.25rem;
     }
 
     /* Hero Section */
@@ -984,6 +1157,14 @@ body {
         margin-left: 0;
         right: 0;
         justify-content: center;
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+        scrollbar-width: none;
+        -ms-overflow-style: none;
+    }
+
+    .testimonials-carousel::-webkit-scrollbar {
+        display: none;
     }
 
     .testimonial-card {
@@ -1100,6 +1281,15 @@ body {
 @media (min-width: 601px) and (max-width: 900px) {
     .container {
         padding: 0 1.5rem;
+    }
+
+    /* Ensure proper navigation layout on tablets */
+    .nav {
+        min-height: 70px;
+    }
+
+    .mobile-nav-toggle {
+        display: none;
     }
 
     /* Hero Section */
@@ -1276,5 +1466,54 @@ body {
 
     .testimonial-card {
         width: 320px;
+    }
+}
+
+/* Desktop: Hide mobile nav toggle on larger screens */
+@media (min-width: 901px) {
+    .mobile-nav-toggle-label {
+        display: none !important;
+    }
+
+    .mobile-nav-backdrop {
+        display: none !important;
+    }
+}
+
+/* Extra Small Mobile: 320px - 480px */
+@media (max-width: 480px) {
+    .container {
+        padding: 0 0.75rem;
+    }
+
+    .logo img {
+        width: 5rem;
+    }
+
+    .mobile-nav-toggle-label {
+        display: block !important;
+        font-size: 1.125rem;
+        padding: 0.25rem;
+        min-width: 40px;
+        min-height: 40px;
+    }
+
+    .sign-up-btn {
+        padding: 0.3rem 0.7rem;
+        font-size: 0.7rem;
+        margin-right: 0.2rem;
+    }
+
+    .hero-text h1 {
+        font-size: 2rem;
+    }
+
+    .hero-text p {
+        font-size: 0.9rem;
+    }
+
+    .cta-btn {
+        padding: 0.75rem 1.5rem;
+        font-size: 0.85rem;
     }
 }
